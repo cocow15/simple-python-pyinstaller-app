@@ -3,7 +3,7 @@ node {
         // Poll SCM every 2 minutes
         properties([
             pipelineTriggers([
-                cron('*/2 * * * *')
+                [$class: 'PollSCM', cron: '*/2 * * * *']
             ])
         ])
 
