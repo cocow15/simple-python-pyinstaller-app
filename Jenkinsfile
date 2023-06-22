@@ -12,12 +12,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'python -m pytest sources/test_calc.py'
-            }
-            post {
-                always {
-                    junit 'test-reports/results.xml'
-                }
+                sh 'python -m pytest'
             }
         }
     }
