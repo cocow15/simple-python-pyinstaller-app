@@ -14,13 +14,6 @@ node {
     }
 
     stage('Test') {
-        docker.image('qnib/pytest').inside {
         
-        }
-        post {
-            always {
-                junit 'test-reports/results.xml'
-            }
-        }
     }
 }
