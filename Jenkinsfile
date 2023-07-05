@@ -1,25 +1,33 @@
-node {
-    stage('Build') {
-        // Poll SCM every 2 minutes
-        properties([
-            pipelineTriggers([
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            triggers {
                 cron('*/2 * * * *')
-            ])
-        ])
-
-        docker.image('python:2-alpine').inside {
-            sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-            stash(name: 'compiled-results', includes: 'sources/*.py*')
-        }
-    }
-
-    stage('Test') {
-        try {
-            docker.image('qnib/pytest').inside {
-                sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
             }
-        } finally {
-            junit 'test-reports/results.xml'
+            steps {
+                script {
+                    docker.image('python:2-alpine').inside {
+                        sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                        stash(name: 'compiled-results', includes: 'sources/*.py*')
+                    }
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    try {
+                        docker.image('qnib/pytest').inside {
+                            sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
+                        }
+                    } finally {
+                        junit 'test-reports/results.xml'
+                    }
+                }
+            }
         }
     }
 }
